@@ -537,17 +537,76 @@ The following questions cover filesystem concepts beyond the implementation scop
 ### Branching and Checkout
 
 **Q5.1:** A branch in Git is just a file in `.git/refs/heads/` containing a commit hash. Creating a branch is creating a file. Given this, how would you implement `pes checkout <branch>` — what files need to change in `.pes/`, and what must happen to the working directory? What makes this operation complex?
+To implement pes checkout <branch>, the following steps are required:
+1.	Update HEAD 
+	Modify .pes/HEAD to point to the new branch:
+ref: refs/heads/<branch>
+2.	Read target commit 
+oRead the commit hash from:
+.pes/refs/heads/<branch>
+3.	Load commit and tree 
+Parse the commit object to get the root tree hash 
+	Recursively load tree objects 
+4.	Update working directory 
+Replace current files with files from the target tree 
+Create/delete files as needed 
+5.	Update index 
+Reset .pes/index to match the checked-out tree
+
+
 
 
 **Q5.2:** When switching branches, the working directory must be updated to match the target branch's tree. If the user has uncommitted changes to a tracked file, and that file differs between branches, checkout must refuse. Describe how you would detect this "dirty working directory" conflict using only the index and the object store.
+To detect conflicts before checkout:
+
+For each tracked file in the index:
+Get stored hash (from index)
+Recompute hash of working directory file
+Compare:
+If hashes differ → file is modified
+Also check:
+If file exists in both branches but with different hashes
 
 **Q5.3:** "Detached HEAD" means HEAD contains a commit hash directly instead of a branch reference. What happens if you make commits in this state? How could a user recover those commits?
-
+.New commits are created
+But no branch points to them
+These commits can be lost later
+.Create a new branch pointing to that commit:
+pes branch <new-branch>
 ### Garbage Collection and Space Reclamation
 
 **Q6.1:** Over time, the object store accumulates unreachable objects — blobs, trees, or commits that no branch points to (directly or transitively). Describe an algorithm to find and delete these objects. What data structure would you use to track "reachable" hashes efficiently? For a repository with 100,000 commits and 50 branches, estimate how many objects you'd need to visit.
+ALGORITHM GarbageCollection()
+
+    # Step 1: Initialize
+    reachable_set ← empty hash set
+
+    # Step 2: Start from all branch references
+    for each file in ".pes/refs/heads/"
+        commit_hash ← read(file)
+        CALL TraverseCommit(commit_hash, reachable_set)
+
+    # Step 3: Scan all objects in object store
+    for each object_file in ".pes/objects/"
+        object_hash ← extract hash from filename
+
+        if object_hash NOT IN reachable_set
+            delete object_file
+
+      END
 
 **Q6.2:** Why is it dangerous to run garbage collection concurrently with a commit operation? Describe a race condition where GC could delete an object that a concurrent commit is about to reference. How does Git's real GC avoid this?
+Garbage Collection (GC) may run while a commit is happening
+How Git avoids this:
+Atomic updates
+Objects written first
+References updated last
+Locking
+Prevent GC during commit
+Grace period
+Recently created objects are not deleted
+Reference safety
+Only delete objects not reachable from ANY ref
 
 ---
 
