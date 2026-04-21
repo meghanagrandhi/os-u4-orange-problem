@@ -165,9 +165,6 @@ int tree_from_index(ObjectID *id_out) {
     // Load the index
     Index index;
     if (index_load(&index) != 0) return -1;
-    if (index.count == 0) return -1; // Nothing staged
-
-    // Sort entries by path so subdirectory grouping works correctly
-    // (index_save already sorts, but let's be safe)
+    if (index.count == 0) return -1; 
     return write_tree_level(index.entries, index.count, "", id_out);
 }
