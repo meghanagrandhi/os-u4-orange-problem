@@ -375,10 +375,10 @@ The test program verifies:
 - Integrity checking (detects corrupted objects)
 
 **📸 Screenshot 1A:** Output of `./test_objects` showing all tests passing.
-![Screenshot 1A](images/Picture1.png)
+![Screenshot 1A](screenshots/Picture1.png)
 
 **📸 Screenshot 1B:** `find .pes/objects -type f` showing the sharded directory structure.
-![Screenshot 1B](images/Picture2.png)
+![Screenshot 1B](screenshots/Picture2.png)
 
 ---
 
@@ -409,10 +409,10 @@ The test program verifies:
 - Deterministic serialization (same entries in any order → identical output)
 
 **📸 Screenshot 2A:** Output of `./test_tree` showing all tests passing.
-![Screenshot 2A](images/Picture3.png)
+![Screenshot 2A](screenshots/Picture3.png)
 
 **📸 Screenshot 2B:** Pick a tree object from `find .pes/objects -type f` and run `xxd .pes/objects/XX/YYY... | head -20` to show the raw binary format.
-![Screenshot 2B](images/Picture4.png)
+![Screenshot 2B](screenshots/Picture4.png)
 ---
 
 ## Phase 3: The Index (Staging Area)
@@ -468,10 +468,10 @@ cat .pes/index    # Human-readable text format
 ```
 
 **📸 Screenshot 3A:** Run `./pes init`, `./pes add file1.txt file2.txt`, `./pes status` — show the output.
-![Screenshot 3A](images/Picture5.png)
+![Screenshot 3A](screenshots/Picture5.png)
 
 **📸 Screenshot 3B:** `cat .pes/index` showing the text-format index with your entries.
-![Screenshot 3B](images/Picture6.png)
+![Screenshot 3B](screenshots/Picture6.png)
 ---
 
 ## Phase 4: Commits and History
@@ -520,15 +520,17 @@ make test-integration
 ```
 
 **📸 Screenshot 4A:** Output of `./pes log` showing three commits with hashes, authors, timestamps, and messages.
-![Screenshot 4A](images/Picture7.png)
+![Screenshot 4A](screenshots/Picture7.png)
 
 **📸 Screenshot 4B:** `find .pes -type f | sort` showing object store growth after three commits.
-![Screenshot 4B](images/Picture8.png)
+![Screenshot 4B](screenshots/Picture8.png)
 
 **📸 Screenshot 4C:** `cat .pes/refs/heads/main` and `cat .pes/HEAD` showing the reference chain.
-![Screenshot 4C](images/Picture9.png)
+![Screenshot 4C](screenshots/Picture9.png)
 
 ---
+![Screenshot](screenshots/Picture10.png)
+![Screenshot](screenshots/Picture11.png)
 
 ## Phase 5 & 6: Analysis-Only Questions
 
