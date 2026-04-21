@@ -152,7 +152,7 @@ static int write_tree_level(IndexEntry *entries, int count,
         }
     }
 
-    // Serialize and write this tree level to object store
+
     void *data;
     size_t len;
     if (tree_serialize(&tree, &data, &len) != 0) return -1;
