@@ -471,7 +471,7 @@ cat .pes/index    # Human-readable text format
 ![Screenshot 3A](screenshots/Picture5.png)
 
 **📸 Screenshot 3B:** `cat .pes/index` showing the text-format index with your entries.
-  ![Screenshot 3B](screenshot/Picture6.png)
+  ![Screenshot 3B](screenshots/Picture6.png)
 ---
 
 ## Phase 4: Commits and History
