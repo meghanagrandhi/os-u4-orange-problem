@@ -129,9 +129,64 @@ int tree_serialize(const Tree *tree, void **data_out, size_t *len_out) {
 //   - object_write    : save that binary buffer to the store as OBJ_TREE
 //
 // Returns 0 on success, -1 on error.
+
 int tree_from_index(ObjectID *id_out) {
-    // TODO: Implement recursive tree building
-    // (See Lab Appendix for logical steps)
-    (void)id_out;
-    return -1;
+    Index index;
+    index_load(&index);
+
+    Tree root;
+    root.count = 0;
+
+    for (int i = 0; i < index.count; i++) {
+        char *path = strdup(index.entries[i].path);
+
+        char *saveptr;
+        char *token = strtok_r(path, "/", &saveptr);
+
+        Tree *current = &root;
+
+        while (token) {
+            char *next = strtok_r(NULL, "/", &saveptr);
+
+            if (!next) {
+                TreeEntry e;
+                e.mode = index.entries[i].mode;
+                e.hash = index.entries[i].hash;
+                snprintf(e.name, sizeof(e.name), "%s", token);
+
+                current->entries[current->count++] = e;
+            } else {
+                // create/find subtree
+                int found = 0;
+                for (int j = 0; j < current->count; j++) {
+                    if (strcmp(current->entries[j].name, token) == 0) {
+                        found = 1;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    TreeEntry dir;
+                    dir.mode = 040000;
+                    memset(&dir.hash, 0, sizeof(ObjectID));
+                    snprintf(dir.name, sizeof(dir.name), "%s", token);
+                    current->entries[current->count++] = dir;
+                }
+            }
+
+            token = next;
+        }
+
+        free(path);
+    }
+
+    // serialize + store root tree
+    void *raw;
+    size_t len;
+
+    tree_serialize(&root, &raw, &len);
+    object_write(OBJ_TREE, raw, len, id_out);
+    free(raw);
+
+    return 0;
 }
